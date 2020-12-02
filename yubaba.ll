@@ -145,6 +145,11 @@ declare i64 @time(i64*)
 
 
 
+define void @int_pp(i32) {
+  call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @intpp, i32 0, i32 0), i32 %0)
+  ret void
+}
+
 define void @pp(i8*) #0 {
   %2 = alloca i8*, align 8
   %3 = alloca i32, align 4
