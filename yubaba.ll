@@ -129,10 +129,12 @@ define i32 @main(i32, i8**) {
   call void @rtrim(i8* %5)  ;; fgetsしたときの\nを取り除く
   call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([58 x i8], [58 x i8]* @str2, i32 0, i32 0), i8* %5)
   %9 = call i32 @strLen(i8* %5)  ;; 文字列の長さを取る
+  ;%test = call i32 @mbStrLen(i8* %5)  ;; 文字列の長さを取る
   %10 = call i32 @getRand(i32 %9)  ;; 乱数生成
   call void @pp(i8* %5) ;; prettyprint
   %11 = call i8* @substr(i8* %5, i32 %10, i32 1)  ;; 名前を奪う
   call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([106 x i8], [106 x i8]* @str4, i32 0, i32 0), i8* %11, i8* %11, i8* %11)
+  ;call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @intpp, i32 0, i32 0), i32 %test)
   ret i32 0
 }
 
