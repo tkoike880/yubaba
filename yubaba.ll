@@ -116,7 +116,8 @@ else:
   ret i32 %5
 }
 
-define i8* @mbSubstr(i8*, i32) {
+;; 名前を奪う（マルチバイト対応版, 切り出す文字数は１文字に固定）
+define i8* @mbSubstr1(i8*, i32) {
 start:
   %2 = alloca i8*, align 8  ;; pointer
   %count = alloca i32, align 4
