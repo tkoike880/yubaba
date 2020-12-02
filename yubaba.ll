@@ -2,12 +2,8 @@
 %struct.__sFILEX = type opaque
 %struct.__sbuf = type { i8*, i32 }
 
-@.str = private unnamed_addr constant [4 x i8] c"%u\0A\00", align 1
-@intpp = private unnamed_addr constant [4 x i8] c"%i\0a\00", align 1  ;; intの中身を見る用
-@test_str = private unnamed_addr constant [6 x i8] c"hoge\0a\00", align 1  ;; printfデバッグ用
 @str1 = private unnamed_addr constant [50 x i8] c"契約書だよ。そこに名前を書きな。\0a\00", align 1
 @str2 = private unnamed_addr constant [58 x i8] c"フン。%sというのかい。贅沢な名だねぇ。\0a\00", align 1
-@str3 = private unnamed_addr constant [5 x i8] c"test\00", align 1
 @str4 = private unnamed_addr constant [106 x i8] c"今からお前の名前は%sだ。いいかい、%sだよ。分かったら返事をするんだ、%s!!\0A\00", align 1
 @__stdinp = external global %struct.__sFILE*, align 8
 
@@ -137,7 +133,6 @@ then:
 then2:
   ;; 1byte文字かマルチバイト文字の先頭
   %7 = load i32, i32* %count, align 4  ;; count
-  call void @int_pp(i32 %7)
   %test3 = icmp eq i32 %1, %7  ;; check count
   br i1 %test3, label %then3, label %else3
 then3:
@@ -206,57 +201,12 @@ define i32 @main(i32, i8**) {
   call void @rtrim(i8* %5)  ;; fgetsしたときの\nを取り除く
   call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([58 x i8], [58 x i8]* @str2, i32 0, i32 0), i8* %5)
   %9 = call i32 @strLen(i8* %5)  ;; 文字列の長さを取る
-  ;%test = call i32 @mbStrLen(i8* %5)  ;; 文字列の長さを取る
   %10 = call i32 @getRand(i32 %9)  ;; 乱数生成
-  call void @pp(i8* %5) ;; prettyprint
   %11 = call i8* @substr(i8* %5, i32 %10, i32 1)  ;; 名前を奪う
   call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([106 x i8], [106 x i8]* @str4, i32 0, i32 0), i8* %11, i8* %11, i8* %11)
-  ;call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @intpp, i32 0, i32 0), i32 %test)
   ret i32 0
 }
 
 declare i32 @printf(i8*, ...)
 declare i8* @fgets(i8*, i32, %struct.__sFILE*)
 declare i64 @time(i64*)
-
-
-
-
-define void @int_pp(i32) {
-  call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @intpp, i32 0, i32 0), i32 %0)
-  ret void
-}
-
-define void @pp(i8*) #0 {
-  %2 = alloca i8*, align 8
-  %3 = alloca i32, align 4
-  store i8* %0, i8** %2, align 8
-  store i32 0, i32* %3, align 4
-  br label %4
-
-; <label>:4:                                      ; preds = %12, %1
-  %5 = load i8*, i8** %2, align 8
-  %6 = load i32, i32* %3, align 4
-  %7 = sext i32 %6 to i64
-  %8 = getelementptr inbounds i8, i8* %5, i64 %7
-  %9 = load i8, i8* %8, align 1
-  %10 = sext i8 %9 to i32
-  %11 = icmp ne i32 %10, 0
-  br i1 %11, label %12, label %22
-
-; <label>:12:                                     ; preds = %4
-  %13 = load i8*, i8** %2, align 8
-  %14 = load i32, i32* %3, align 4
-  %15 = sext i32 %14 to i64
-  %16 = getelementptr inbounds i8, i8* %13, i64 %15
-  %17 = load i8, i8* %16, align 1
-  %18 = sext i8 %17 to i32
-  %19 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i32 0, i32 0), i8 %17)
-  %20 = load i32, i32* %3, align 4
-  %21 = add nsw i32 %20, 1
-  store i32 %21, i32* %3, align 4
-  br label %4
-
-; <label>:22:                                     ; preds = %4
-  ret void
-}
