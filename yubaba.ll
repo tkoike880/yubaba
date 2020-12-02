@@ -94,6 +94,82 @@ else:
   ret i32 %10  ; return count
 }
 
+define i32 @getMsbPos(i8) {
+  %i = alloca i32, align 4
+  %v = alloca i8, align 4
+  store i32 0, i32* %i, align 4  ;; int i = 0;
+  store i8 %0, i8* %v, align 4  ;; int v = arg1;
+  br label %loop
+loop:
+  %vcur = load i8, i8* %v, align 4  ;; current v
+  %test = icmp ne i8 %vcur, 0
+  br i1 %test, label %then, label %else
+then:
+  %2 = load i32, i32* %i, align 4
+  %3 = add nsw i32 %2, 1
+  store i32 %3, i32* %i, align 4  ;; ++i
+  %4 = lshr i8 %vcur, 1
+  store i8 %4, i8* %v, align 4  ;; %vcur >>= 1
+  br label %loop
+else:
+  %5 = load i32, i32* %i, align 4  ;; i
+  ret i32 %5
+}
+
+define i8* @mbSubstr(i8*, i32) {
+start:
+  %2 = alloca i8*, align 8  ;; pointer
+  %count = alloca i32, align 4
+  store i8* %0, i8** %2, align 8
+  store i32 0, i32* %count, align 4  ;; count = 0
+  br label %loop_start
+loop_start:
+  %3 = load i8*, i8** %2, align 8 ;; str
+  %4 = getelementptr inbounds i8, i8* %3, i32 0
+  %5 = load i8, i8* %4, align 1
+  %test = icmp ne i8 %5, 0  ;; check %5 is \0
+  br i1 %test, label %then, label %else
+then:
+  %6 = and i8 %5, 192  ;; and %5 0xc0
+  %test2 = icmp ne i8 %6, 128  ;; check 0x80
+  br i1 %test2, label %then2, label %else2
+then2:
+  ;; 1byte文字かマルチバイト文字の先頭
+  %7 = load i32, i32* %count, align 4  ;; count
+  call void @int_pp(i32 %7)
+  %test3 = icmp eq i32 %1, %7  ;; check count
+  br i1 %test3, label %then3, label %else3
+then3:
+  ;; strからn文字返す
+  %len = alloca i32*, align 4
+  %not = xor i8 %5, 255  ;; ビット反転
+  %pos = call i32 @getMsbPos(i8 %not)  ;; 最上位の0の場所を取る（この位置を取ることで何byte文字か分かる）
+  %test4 = icmp eq i32 %pos, 8
+  br i1 %test4, label %then4, label %else4
+then4:
+  %end_1 = getelementptr inbounds i8, i8* %3, i32 1
+  store i8 0, i8* %end_1, align 1 ;; \0を書き込んで文字列が終わったことにする
+  ret i8* %3  ;; return str
+else4:
+  %r = sub i32 8, %pos  ;; (8 - %pos) byte先を\0で埋めればよい
+  %end = getelementptr inbounds i8, i8* %3, i32 %r
+  store i8 0, i8* %end, align 1 ;; \0を書き込んで文字列が終わったことにする
+  ret i8* %3  ;; return str
+else3:
+  ;; ++countして次へ
+  %8 = add nsw i32 %7, 1
+  store i32 %8, i32* %count, align 4  ;; ++count
+  br label %else2
+else2:
+  %9 = load i8*, i8** %2, align 8
+  %10 = getelementptr inbounds i8, i8* %9, i32 1
+  store i8* %10, i8** %2, align 8  ;; ++str
+  br label %loop_start
+else:
+  %11 = load i8*, i8** %2, align 8 ;; str
+  ret i8* %11  ; return str
+}
+
 ; 名前を奪う
 define i8* @substr(i8*, i32, i32) {
   %4 = getelementptr inbounds i8, i8* %0, i32 %1  ;; offset
