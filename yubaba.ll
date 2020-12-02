@@ -39,7 +39,7 @@ else:
   ret void
 }
 
-define i32 @strLen(i8*) #0 {
+define i32 @strLen(i8*) {
 start:
   %1 = alloca i8*, align 8  ;; pointer
   %2 = alloca i32, align 4  ;; int i
@@ -64,7 +64,7 @@ else:
   ret i32 %10  ; return i
 }
 
-define i32 @mbStrLen(i8*) #0 {
+define i32 @mbStrLen(i8*) {
 start:
   %1 = alloca i8*, align 8  ;; pointer
   %count = alloca i32, align 4
