@@ -67,35 +67,31 @@ else:
 define i32 @mbStrLen(i8*) #0 {
 start:
   %1 = alloca i8*, align 8  ;; pointer
-  %2 = alloca i32, align 4  ;; int i
   %count = alloca i32, align 4
   store i8* %0, i8** %1, align 8
-  store i32 0, i32* %2, align 4  ;; i = 0
   store i32 0, i32* %count, align 4  ;; count = 0
   br label %loop_start
 loop_start:
-  %3 = load i8*, i8** %1, align 8 ;; str
-  %4 = load i32, i32* %2, align 4
-  %5 = getelementptr inbounds i8, i8* %3, i32 %4
-  %6 = load i8, i8* %5, align 1
-  %7 = sext i8 %6 to i32
-  %test = icmp ne i8 %6, 0  ;; check %7 is \0
+  %2 = load i8*, i8** %1, align 8 ;; str
+  %3 = getelementptr inbounds i8, i8* %2, i32 0
+  %4 = load i8, i8* %3, align 1
+  %test = icmp ne i8 %4, 0  ;; check %4 is \0
   br i1 %test, label %then, label %else
 then:
-  %8 = load i32, i32* %2, align 4
-  %9 = add nsw i32 %8, 1
-  store i32 %9, i32* %2, align 4  ;; ++i
-  %and = and i8 %6, 192  ;; and %6 0xc0
-  %test2 = icmp ne i8 %and, 128  ;; check 0x80
+  %5 = load i8*, i8** %1, align 8
+  %6 = getelementptr inbounds i8, i8* %5, i32 1
+  store i8* %6, i8** %1, align 8  ;; ++str
+  %7 = and i8 %4, 192  ;; and %4 0xc0
+  %test2 = icmp ne i8 %7, 128  ;; check 0x80
   br i1 %test2, label %then2, label %loop_start
 then2:
-  %10 = load i32, i32* %count, align 4
-  %11 = add nsw i32 %10, 1
-  store i32 %11, i32* %count, align 4  ;; ++count
+  %8 = load i32, i32* %count, align 4
+  %9 = add nsw i32 %8, 1
+  store i32 %9, i32* %count, align 4  ;; ++count
   br label %loop_start
 else:
-  %12 = load i32, i32* %count, align 4
-  ret i32 %12  ; return count
+  %10 = load i32, i32* %count, align 4
+  ret i32 %10  ; return count
 }
 
 ; 名前を奪う
