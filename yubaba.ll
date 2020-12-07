@@ -4,7 +4,7 @@
 
 @str1 = private unnamed_addr constant [50 x i8] c"契約書だよ。そこに名前を書きな。\0a\00", align 1
 @str2 = private unnamed_addr constant [58 x i8] c"フン。%sというのかい。贅沢な名だねぇ。\0a\00", align 1
-@str4 = private unnamed_addr constant [106 x i8] c"今からお前の名前は%sだ。いいかい、%sだよ。分かったら返事をするんだ、%s!!\0A\00", align 1
+@str4 = private unnamed_addr constant [106 x i8] c"今からお前の名前は%sだ。いいかい、%sだよ。分かったら返事をするんだ、%s!!\0a\00", align 1
 @__stdinp = external global %struct.__sFILE*, align 8
 
 define void @rtrim(i8*) {
