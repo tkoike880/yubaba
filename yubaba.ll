@@ -60,6 +60,7 @@ else:
   ret i32 %10  ; return i
 }
 
+;; 文字列の長さを返す（マルチバイト対応版）
 define i32 @mbStrLen(i8*) {
 start:
   %1 = alloca i8*, align 8  ;; pointer
@@ -90,6 +91,7 @@ else:
   ret i32 %10  ; return count
 }
 
+;; 1が立っている最上位ビットの位置を得る
 define i32 @getMsbPos(i8) {
   %i = alloca i32, align 4
   %v = alloca i8, align 4
